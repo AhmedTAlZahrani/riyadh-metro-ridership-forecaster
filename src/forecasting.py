@@ -389,3 +389,4 @@ class ModelTrainer:
             X.append(data[i - seq_length:i])
             y.append(data[i, 0])
         return np.array(X), np.array(y)
+
