@@ -356,3 +356,4 @@ def get_feature_names(lags=None, rolling_windows=None):
     return (prayer_features + holiday_features + cyclical_features
             + lag_features + rolling_features + temp_features
             + weekend_features)
+
