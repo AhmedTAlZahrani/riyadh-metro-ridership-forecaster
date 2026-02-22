@@ -287,3 +287,4 @@ class ModelEvaluator:
         with open(output, "w") as f:
             json.dump(metrics, f, indent=2, default=str)
         print(f"Metrics saved to {output}")
+
