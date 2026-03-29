@@ -1,7 +1,11 @@
+import os
 import numpy as np
 import pandas as pd
 import joblib
 from pathlib import Path
+
+OUTPUT_DIR = os.getenv("METRO_OUTPUT_DIR", "models")
+MODEL_TYPE = os.getenv("METRO_MODEL_TYPE", "xgboost")
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from xgboost import XGBRegressor
 
@@ -19,7 +23,7 @@ FORECAST_FEATURES = [
 TARGET = "ridership"
 
 
-def mape(y_true, y_pred):
+def mape(y_true, y_pred) -> float:
     """Compute Mean Absolute Percentage Error.
 
     Parameters
@@ -52,14 +56,14 @@ class ModelTrainer:
         Directory path for saving trained model artifacts.
     """
 
-    def __init__(self, output_dir="models"):
-        self.output_dir = Path(output_dir)
+    def __init__(self, output_dir=None) -> None:
+        self.output_dir = Path(output_dir or OUTPUT_DIR)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.models = {}
         self.results = {}
         self.predictions = {}
 
-    def train_prophet(self, train_df, test_df):
+    def train_prophet(self, train_df, test_df) -> dict:
         """Train a Prophet model on ridership data.
 
         Prophet handles seasonality and holiday effects natively.
@@ -114,7 +118,7 @@ class ModelTrainer:
 
         return metrics
 
-    def train_xgboost(self, train_df, test_df, features=None):
+    def train_xgboost(self, train_df, test_df, features=None) -> dict:
         """Train an XGBoost regression model.
 
         Uses gradient boosted trees with features engineered from
@@ -182,7 +186,7 @@ class ModelTrainer:
         return metrics
 
     def train_lstm(self, train_df, test_df, seq_length=168, epochs=50,
-                   batch_size=64):
+                   batch_size=64) -> dict:
         """Train a two-layer LSTM neural network.
 
         Uses a sliding window approach with configurable sequence length.
@@ -272,7 +276,7 @@ class ModelTrainer:
         return metrics
 
     def compare_models(self, train_df, test_df, features=None,
-                       seq_length=168, epochs=50):
+                       seq_length=168, epochs=50) -> pd.DataFrame:
         """Train and compare all three forecasting models.
 
         Parameters
@@ -304,7 +308,7 @@ class ModelTrainer:
 
         return comparison
 
-    def comparison_table(self):
+    def comparison_table(self) -> pd.DataFrame:
         """Return metrics as a sorted DataFrame.
 
         Returns
@@ -316,7 +320,7 @@ class ModelTrainer:
                 for name, metrics in self.results.items()]
         return pd.DataFrame(rows).sort_values("MAPE")
 
-    def save_model(self, model_name, filename=None):
+    def save_model(self, model_name, filename=None) -> None:
         """Save a trained model to disk.
 
         Parameters

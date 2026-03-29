@@ -1,6 +1,9 @@
+import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
+
+DATA_DIR = os.getenv("METRO_DATA_DIR", "data")
 
 
 REQUIRED_COLUMNS = ["timestamp", "line", "ridership"]
@@ -11,7 +14,7 @@ VALID_LINES = [
 ]
 
 
-def load_ridership_data(path="data/ridership.csv"):
+def load_ridership_data(path=None) -> pd.DataFrame:
     """Load and validate the Riyadh Metro ridership dataset.
 
     Parses timestamps, validates required columns, fills missing
@@ -27,7 +30,7 @@ def load_ridership_data(path="data/ridership.csv"):
     pandas.DataFrame
         DataFrame with validated and enriched ridership data.
     """
-    path = Path(path)
+    path = Path(path or os.path.join(DATA_DIR, "ridership.csv"))
     if not path.exists():
         raise FileNotFoundError(
             f"Data file not found: {path}. Run synth_ridership.py first."
@@ -56,7 +59,7 @@ def load_ridership_data(path="data/ridership.csv"):
     return df
 
 
-def _fill_missing_intervals(df):
+def _fill_missing_intervals(df) -> pd.DataFrame:
     """Fill missing hourly intervals with interpolated ridership.
 
     For each group (line + station_id if present, or just line),
@@ -114,7 +117,7 @@ def _fill_missing_intervals(df):
     return result
 
 
-def load_line_data(path="data/ridership_by_line.csv"):
+def load_line_data(path=None) -> pd.DataFrame:
     """Load line-level aggregated ridership data.
 
     Parameters
@@ -127,7 +130,7 @@ def load_line_data(path="data/ridership_by_line.csv"):
     pandas.DataFrame
         DataFrame with line-level hourly ridership.
     """
-    path = Path(path)
+    path = Path(path or os.path.join(DATA_DIR, "ridership_by_line.csv"))
     if not path.exists():
         raise FileNotFoundError(
             f"Line data not found: {path}. Run synth_ridership.py first."
@@ -145,7 +148,7 @@ def load_line_data(path="data/ridership_by_line.csv"):
     return df
 
 
-def split_by_date(df, test_days=30):
+def split_by_date(df, test_days=30) -> tuple:
     """Split data chronologically into train and test sets.
 
     Parameters
@@ -167,7 +170,7 @@ def split_by_date(df, test_days=30):
     return train, test
 
 
-def get_line_names(df):
+def get_line_names(df) -> list:
     """Return sorted list of unique line names in the dataset.
 
     Parameters
