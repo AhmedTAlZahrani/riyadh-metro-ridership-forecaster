@@ -33,14 +33,20 @@ consistently the strongest predictor.
 
 ## Results
 
-On a 30-day holdout test, XGBoost achieved the lowest error (MAPE 10.8%),
-followed by LSTM (11.9%) and Prophet (14.2%). The lag-24 feature dominates
-XGBoost's importance ranking, confirming that same-hour-yesterday ridership
-is the single best predictor. Prayer-time flags and the weekend indicator
-rank in the top five, validating the importance of Saudi-specific temporal
-modeling. Station clustering via K-means identifies four distinct archetypes
-(business, residential, interchange, airport) with markedly different
-demand profiles.
+30-day holdout test:
+
+| Model | MAPE |
+|-------|------|
+| Prophet | 14.2% |
+| LSTM | 11.9% |
+| **XGBoost** | **10.8%** |
+
+The lag-24 feature dominates XGBoost's importance ranking, confirming that
+same-hour-yesterday ridership is the single best predictor. Prayer-time
+flags and the weekend indicator rank in the top five, validating the
+importance of Saudi-specific temporal modeling. Station clustering via
+K-means identifies four distinct archetypes (business, residential,
+interchange, airport) with markedly different demand profiles.
 
 ## Quick Start
 
